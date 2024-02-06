@@ -6,15 +6,19 @@
     <title>TrueBox出品</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
+        #hand {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
         .card {
-            display: inline-block;
+            box-sizing: border-box;
             margin: 5px;
             padding: 15px;
             border: 1px solid #ddd;
             border-radius: 8px;
             background-color: #fff;
             font-size: 20px;
-            width: 60px;
             height: 90px;
             text-align: center;
             position: relative;
@@ -47,15 +51,18 @@
             font-size: 18px;
             margin-bottom: 20px;
         }
+
+        /* 移动设备样式 */
         @media (max-width: 600px) {
             .card {
-                font-size: 18px;
-                width: 50px;
-                height: 75px;
-                padding: 10px;
+                width: calc(33.33% - 10px); /* 每行显示3张牌 */
             }
-            .suit {
-                font-size: 14px;
+        }
+
+        /* 电脑屏幕样式 */
+        @media (min-width: 601px) {
+            .card {
+                width: 60px;
             }
         }
     </style>
@@ -83,7 +90,6 @@
                                        '</div>';
                         $('#hand').append(cardHtml);
                     });
-
                     $('#probability').text(data.message);
                 });
             });
