@@ -9,28 +9,28 @@
         .card {
             display: inline-block;
             margin: 5px;
-            padding: 20px;
+            padding: 15px;
             border: 1px solid #ddd;
             border-radius: 8px;
             background-color: #fff;
-            font-size: 24px;
-            width: 80px;
-            height: 120px;
+            font-size: 20px;
+            width: 60px;
+            height: 90px;
             text-align: center;
             position: relative;
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
         .suit {
-            font-size: 18px;
+            font-size: 16px;
             position: absolute;
         }
         .top-suit {
-            top: 5px;
-            left: 5px;
+            top: 2px;
+            left: 2px;
         }
         .bottom-suit {
-            bottom: 5px;
-            right: 5px;
+            bottom: 2px;
+            right: 2px;
             transform: rotate(180deg);
         }
         .hearts, .diamonds {
@@ -41,6 +41,22 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
+        }
+        #generate-hand {
+            padding: 10px 20px;
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+        @media (max-width: 600px) {
+            .card {
+                font-size: 18px;
+                width: 50px;
+                height: 75px;
+                padding: 10px;
+            }
+            .suit {
+                font-size: 14px;
+            }
         }
     </style>
 </head>
