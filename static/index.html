@@ -14,17 +14,29 @@
         .card {
             box-sizing: border-box;
             margin: 5px;
-            padding: 10px;
             border: 1px solid #ddd;
             border-radius: 8px;
             background-color: #fff;
-            aspect-ratio: 2 / 3;
             text-align: center;
             position: relative;
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            width: calc(33.33% - 10px); /* Adjust width for responsiveness */
+        }
+        .card::before {
+            content: '';
+            display: block;
+            padding-top: 150%; /* Set 2:3 aspect ratio */
+        }
+        .card-content {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            padding: 10px;
         }
         .suit, .number {
-            font-size: calc(2.5vw);
+            font-size: calc(3.3vw); /* Font size as 1/4th of viewport width */
         }
         .suit {
             position: absolute;
@@ -53,17 +65,17 @@
             margin-bottom: 20px;
         }
 
-        /* 移动设备样式 */
+        /* Mobile devices style */
         @media (max-width: 600px) {
             .card {
-                width: calc(33.33% - 10px); /* 每行显示3张牌 */
+                width: calc(33.33% - 10px); /* Display 3 cards per row */
             }
         }
 
-        /* 电脑屏幕样式 */
+        /* Computer screen style */
         @media (min-width: 601px) {
             .card {
-                width: calc(100% / 5 - 10px); /* 每行显示5张牌 */
+                width: calc(100% / 5 - 10px); /* Display 5 cards per row */
             }
         }
     </style>
@@ -85,9 +97,11 @@
                         var suitClass = suit === '♥' ? 'hearts' :
                                         suit === '♦' ? 'diamonds' : '';
                         var cardHtml = '<div class="card ' + suitClass + '">' +
-                                           '<div class="suit top-suit">' + suit + '</div>' +
-                                           '<div class="number">' + number + '</div>' +
-                                           '<div class="suit bottom-suit">' + suit + '</div>' +
+                                           '<div class="card-content">' +
+                                               '<div class="suit top-suit">' + suit + '</div>' +
+                                               '<div class="number">' + number + '</div>' +
+                                               '<div class="suit bottom-suit">' + suit + '</div>' +
+                                           '</div>' +
                                        '</div>';
                         $('#hand').append(cardHtml);
                     });
