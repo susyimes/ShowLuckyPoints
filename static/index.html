@@ -78,34 +78,49 @@
                 width: calc(100% / 5 - 10px); /* Display 5 cards per row */
             }
         }
+
     </style>
 </head>
 <body>
-    <h1>幸运值检测器</h1>
-    <button id="generate-hand">生成幸运值</button>
-    <div id="hand"></div>
-    <p id="probability"></p>
+<h1>幸运值检测器</h1>
+<h3>24h只能生成一次喔</h3>
+<button id="generate-hand">生成幸运值</button>
+<div id="hand"></div>
+<p id="probability"></p>
 
-    <script>
+  <script>
+        function displayHand(handSymbols) {
+            $('#hand').empty();
+            handSymbols.forEach(function(cardSymbol) {
+                var suit = cardSymbol[0];
+                var number = cardSymbol.slice(1);
+                var suitClass = suit === '♥' ? 'hearts' :
+                                suit === '♦' ? 'diamonds' : '';
+                var cardHtml = '<div class="card ' + suitClass + '">' +
+                                   '<div class="card-content">' +
+                                       '<div class="suit top-suit">' + suit + '</div>' +
+                                       '<div class="number">' + number + '</div>' +
+                                       '<div class="suit bottom-suit">' + suit + '</div>' +
+                                   '</div>' +
+                               '</div>';
+                $('#hand').append(cardHtml);
+            });
+        }
+
         $(document).ready(function() {
+            $.getJSON('/get-last-result', function(data) {
+                if (data.hand) {
+                    displayHand(data.hand);
+                    $('#result').text(data.message);
+                    $('#probability').text(data.message);
+                }
+            });
+
             $('#generate-hand').click(function() {
                 $.getJSON('/random-hand', function(data) {
-                    $('#hand').empty();
-                    data.hand.forEach(function(cardSymbol) {
-                        var suit = cardSymbol[0];
-                        var number = cardSymbol.slice(1);
-                        var suitClass = suit === '♥' ? 'hearts' :
-                                        suit === '♦' ? 'diamonds' : '';
-                        var cardHtml = '<div class="card ' + suitClass + '">' +
-                                           '<div class="card-content">' +
-                                               '<div class="suit top-suit">' + suit + '</div>' +
-                                               '<div class="number">' + number + '</div>' +
-                                               '<div class="suit bottom-suit">' + suit + '</div>' +
-                                           '</div>' +
-                                       '</div>';
-                        $('#hand').append(cardHtml);
-                    });
+                    displayHand(data.hand);
                     $('#probability').text(data.message);
+                    $('#result').text(data.message);
                 });
             });
         });
