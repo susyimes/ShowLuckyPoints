@@ -14,27 +14,28 @@
         .card {
             box-sizing: border-box;
             margin: 5px;
-            padding: 15px;
+            padding: 10px;
             border: 1px solid #ddd;
             border-radius: 8px;
             background-color: #fff;
-            font-size: 20px;
-            height: 90px;
+            aspect-ratio: 2 / 3;
             text-align: center;
             position: relative;
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
+        .suit, .number {
+            font-size: calc(2vw); /* 字号是视口宽度的1/4 */
+        }
         .suit {
-            font-size: 16px;
             position: absolute;
         }
         .top-suit {
-            top: 2px;
-            left: 2px;
+            top: 5px;
+            left: 5px;
         }
         .bottom-suit {
-            bottom: 2px;
-            right: 2px;
+            bottom: 5px;
+            right: 5px;
             transform: rotate(180deg);
         }
         .hearts, .diamonds {
@@ -62,7 +63,7 @@
         /* 电脑屏幕样式 */
         @media (min-width: 601px) {
             .card {
-                width: 60px;
+                width: calc(100% / 5 - 10px); /* 每行显示5张牌 */
             }
         }
     </style>
