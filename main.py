@@ -1,6 +1,7 @@
 import datetime
 import os
 
+
 from flask import Flask, jsonify, request, send_from_directory, json
 import random
 
@@ -47,7 +48,19 @@ def load_user_data(user_id):
         # File not found, so no data exists for any user
         return {}, True
 
-def save_user_data(data):
+def save_user_data(user_id, new_data):
+    try:
+        # Read existing data
+        with open(user_data_file, 'r') as file:
+            data = json.load(file)
+    except FileNotFoundError:
+        # If file does not exist, start with an empty dictionary
+        data = {}
+
+    # Update the data for the specific user_id
+    data[user_id] = new_data
+
+    # Write the updated data back to the file
     with open(user_data_file, 'w') as file:
         json.dump(data, file)
 
@@ -64,7 +77,7 @@ def get_rank_value(card):
 
 @app.route('/get-last-result')
 def get_last_result():
-    user_id = request.remote_addr
+    user_id = request.args.get('user_id')
     last_result, can_generate_new = load_user_data(user_id)
 
     if not can_generate_new:
@@ -76,8 +89,7 @@ def get_last_result():
 
 @app.route('/random-hand')
 def random_hand():
-
-    user_id = request.remote_addr
+    user_id = request.args.get('user_id')
     last_result, can_generate_new = load_user_data(user_id)
     user_data = last_result
     if not can_generate_new:
@@ -112,11 +124,11 @@ def random_hand():
     result = {'hand': hand_symbols, 'probability': probability, 'message': message}
 
     # Update user data
-    user_data[user_id] = {
+    new_user_data = {
         'last_access': current_time.strftime('%Y-%m-%d %H:%M:%S'),
         'last_result': result
     }
-    save_user_data(user_data)
+    save_user_data(user_id, new_user_data)
 
     return jsonify(result)
 

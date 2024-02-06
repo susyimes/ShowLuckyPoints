@@ -79,6 +79,7 @@
             }
         }
 
+
     </style>
 </head>
 <body>
@@ -86,9 +87,72 @@
 <h3>24h只能生成一次喔</h3>
 <button id="generate-hand">生成幸运值</button>
 <div id="hand"></div>
-<p id="probability"></p>
+<p id="result"></p>
 
-  <script>
+<script>
+         function generateDeviceFingerprint() {
+            // Create an object to store device fingerprint attributes
+            var deviceFingerprint = {};
+
+            // User Agent
+            deviceFingerprint.userAgent = navigator.userAgent;
+
+            // Screen Resolution
+            deviceFingerprint.screenResolution = window.screen.width + "x" + window.screen.height;
+
+            // Timezone Offset
+            deviceFingerprint.timezoneOffset = new Date().getTimezoneOffset();
+
+            // Available Fonts
+            deviceFingerprint.availableFonts = navigator.fonts ? Array.from(navigator.fonts).map(font => font.family) : null;
+
+            // Plugins
+            deviceFingerprint.plugins = Array.from(navigator.plugins).map(plugin => plugin.name);
+
+            // Language
+            deviceFingerprint.language = navigator.language || navigator.userLanguage || navigator.browserLanguage || navigator.systemLanguage || null;
+
+            // WebGL Renderer
+            var canvas = document.createElement("canvas");
+            var gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
+            if (gl) {
+                var debugInfo = gl.getExtension("WEBGL_debug_renderer_info");
+                deviceFingerprint.webglRenderer = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
+            } else {
+                deviceFingerprint.webglRenderer = null;
+            }
+
+            // Hash the device fingerprint attributes to create a unique identifier
+            function hashFingerprintAttributes(attributes) {
+                var jsonString = JSON.stringify(attributes);
+                var hash = 0, i, chr;
+                for (i = 0; i < jsonString.length; i++) {
+                    chr = jsonString.charCodeAt(i);
+                    hash = ((hash << 5) - hash) + chr;
+                    hash |= 0; // Convert to 32-bit integer
+                }
+                return hash;
+            }
+
+            // Calculate and return the device fingerprint hash
+            return hashFingerprintAttributes(deviceFingerprint);
+        }
+
+        // Send the device fingerprint to the server when making a request
+        document.addEventListener('DOMContentLoaded', function() {
+            var deviceFingerprint = generateDeviceFingerprint();
+            fetch('/get-finger', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ deviceFingerprint: deviceFingerprint })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+            });
+        });
         function displayHand(handSymbols) {
             $('#hand').empty();
             handSymbols.forEach(function(cardSymbol) {
@@ -106,24 +170,28 @@
                 $('#hand').append(cardHtml);
             });
         }
+$(document).ready(function() {
+    var deviceFingerprint = generateDeviceFingerprint();
+    var url = '/get-last-result?user_id=' + deviceFingerprint;
+    $.getJSON(url, function(data) {
+        if (data.hand) {
+            displayHand(data.hand);
+            $('#result').text(data.message);
 
-        $(document).ready(function() {
-            $.getJSON('/get-last-result', function(data) {
-                if (data.hand) {
-                    displayHand(data.hand);
-                    $('#result').text(data.message);
-                    $('#probability').text(data.message);
-                }
-            });
+        }
+    });
 
-            $('#generate-hand').click(function() {
-                $.getJSON('/random-hand', function(data) {
-                    displayHand(data.hand);
-                    $('#probability').text(data.message);
-                    $('#result').text(data.message);
-                });
-            });
+    $('#generate-hand').click(function() {
+        url = '/random-hand?user_id=' + deviceFingerprint;
+        $.getJSON(url, function(data) {
+            displayHand(data.hand);
+            $('#result').text(data.message);
+
         });
-    </script>
+    });
+});
+
+
+</script>
 </body>
 </html>
