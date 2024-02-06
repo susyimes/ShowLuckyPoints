@@ -29,8 +29,15 @@ def random_hand():
         hand = generate_hand()
         hand_symbols = [card['symbol'] for card in hand]
         probability = evaluate_hand(hand)
-        print(hand_symbols,probability)
-        return jsonify({'hand': hand_symbols, 'probability': probability})
+
+        # Calculate the percentage of hands that are worse than the current hand
+        better_than_percentage = 100 - probability
+
+        # Create a message that includes this information
+        message = f'这手牌的概率是 {probability:.2f}%, 超越了 {better_than_percentage:.2f}% 的人。'
+
+        print(hand_symbols, message)
+        return jsonify({'hand': hand_symbols, 'probability': probability, 'message': message})
     except Exception as e:
         print(str(e))
         return jsonify({'error': str(e)})

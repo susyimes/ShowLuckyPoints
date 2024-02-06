@@ -83,7 +83,8 @@
                                        '</div>';
                         $('#hand').append(cardHtml);
                     });
-                    $('#probability').text('可能性: ' + data.probability.toFixed(2) + '%');
+
+                    $('#probability').text(data.message);
                 });
             });
         });
